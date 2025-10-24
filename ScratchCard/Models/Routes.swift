@@ -26,23 +26,23 @@ enum APIRoute: Sendable {
 }
 
 extension APIRoute: APIEndpoint {
-    var baseURL: URL? {
+    nonisolated var baseURL: URL? {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.o2.sk"
         return components.url
     }
 
-    var path: String {
+    nonisolated var path: String {
         switch self {
         case .version:
             return "/version"
         }
     }
 
-    var method: HTTPMethod { .get }
+    nonisolated var method: HTTPMethod { .get }
 
-    var queryItems: [URLQueryItem]? {
+    nonisolated var queryItems: [URLQueryItem]? {
         switch self {
         case .version(let code):
             return [URLQueryItem(name: "code", value: code)]

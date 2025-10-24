@@ -19,43 +19,35 @@ extension APIClient: DependencyKey {
 
         return APIClient(
             request: { endpoint in
-                do {
-                    let baseURL = try endpoint.baseURL.unwrapped(or: "Invalid base URL")
+                let baseURL = try endpoint.baseURL.unwrapped(or: "Invalid base URL")
 
-                    guard var components = URLComponents(
-                        url: baseURL.appendingPathComponent(endpoint.path),
-                        resolvingAgainstBaseURL: true
-                    ) else {
-                        throw APIError.invalidURL(message: "Invalid URL components")
-                    }
-
-                    components.queryItems = endpoint.queryItems
-
-                    guard let url = components.url else {
-                        throw APIError.invalidURL(message: "Invalid URL")
-                    }
-
-                    var request = URLRequest(url: url)
-                    request.httpMethod = endpoint.method.rawValue
-
-                    let (data, response) = try await session.data(for: request)
-
-                    guard let httpResponse = response as? HTTPURLResponse else {
-                        throw APIError.invalidResponse
-                    }
-
-                    guard (200...299).contains(httpResponse.statusCode) else {
-                        throw APIError.httpError(statusCode: httpResponse.statusCode)
-                    }
-
-                    return data
-                } catch let error as APIError {
-                    throw error
-                } catch let error as UnwrappingError {
-                    throw APIError.invalidURL(message: error.localizedDescription)
-                } catch {
-                    throw APIError.transport(message: error.localizedDescription)
+                guard var components = URLComponents(
+                    url: baseURL.appendingPathComponent(endpoint.path),
+                    resolvingAgainstBaseURL: true
+                ) else {
+                    throw APIError.invalidURL(message: "Invalid URL components")
                 }
+
+                components.queryItems = endpoint.queryItems
+
+                guard let url = components.url else {
+                    throw APIError.invalidURL(message: "Invalid URL")
+                }
+
+                var request = URLRequest(url: url)
+                request.httpMethod = endpoint.method.rawValue
+
+                let (data, response) = try await session.data(for: request)
+
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    throw APIError.invalidResponse
+                }
+
+                guard (200...299).contains(httpResponse.statusCode) else {
+                    throw APIError.httpError(statusCode: httpResponse.statusCode)
+                }
+
+                return data
             }
         )
     }()
