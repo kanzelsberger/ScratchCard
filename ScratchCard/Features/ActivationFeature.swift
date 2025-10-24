@@ -8,7 +8,8 @@
 import ComposableArchitecture
 import Foundation
 
-struct ActivationFeature: Reducer {
+@Reducer struct ActivationFeature {
+
     @ObservableState struct State: Equatable {
         let code: String
         var isActivating: Bool = false
@@ -17,7 +18,7 @@ struct ActivationFeature: Reducer {
 
     @CasePathable enum Action {
         case activateButtonTapped
-        case activationResponse(Result<VersionResponse, APIError>)
+        case activationResponse(Result<VersionResponse, Error>)
         case alert(PresentationAction<Alert>)
         case delegate(Delegate)
 
@@ -30,7 +31,7 @@ struct ActivationFeature: Reducer {
         }
     }
 
-    @Dependency(\.apiClient) var apiClient
+    @Dependency(\.apiClient) var api
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
@@ -42,16 +43,12 @@ struct ActivationFeature: Reducer {
 
                 state.isActivating = true
 
-                return .run { [code = state.code, apiClient] send in
+                return .run { [code = state.code] send in
                     // This operation should NOT be cancelled when screen is dismissed
-                    do {
-                        let response: VersionResponse = try await apiClient.request(.version(code: code))
-                        await send(.activationResponse(.success(response)))
-                    } catch let error as APIError {
-                        await send(.activationResponse(.failure(error)))
-                    } catch {
-                        await send(.activationResponse(.failure(.transport(message: error.localizedDescription))))
-                    }
+                    let response: VersionResponse = try await api.request(.version(code: code))
+                    await send(.activationResponse(.success(response)))
+                } catch: { error, send in
+                    await send(.activationResponse(.failure(error)))
                 }
                 // Note: No .cancellable() - operation continues even after screen dismissal
 

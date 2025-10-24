@@ -48,7 +48,7 @@ enum ScratchCardState: Equatable, Sendable {
     }
 }
 
-struct VersionResponse: Codable, Equatable, Sendable {
+nonisolated struct VersionResponse: Codable, Equatable, Sendable {
     let ios: String
 
     init(ios: String) {

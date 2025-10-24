@@ -8,11 +8,12 @@
 import ComposableArchitecture
 import Foundation
 
-enum ScratchCancelID: Hashable, Sendable {
+nonisolated enum ScratchCancelID: Hashable, Sendable {
     case scratching
 }
 
 struct ScratchFeature: Reducer {
+
     @ObservableState struct State: Equatable {
         let currentCardState: ScratchCardState
         var isScratching: Bool = false
