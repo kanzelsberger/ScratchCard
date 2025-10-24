@@ -8,7 +8,7 @@
 import ComposableArchitecture
 import Foundation
 
-nonisolated(unsafe) enum ScratchCancelID: Hashable, Sendable {
+enum ScratchCancelID: Hashable, Sendable {
     case scratching
 }
 
@@ -29,6 +29,7 @@ struct ScratchFeature: Reducer {
     @CasePathable enum Action {
         case scratchButtonTapped
         case scratchingCompleted(String)
+        case cancelScratching
         case delegate(Delegate)
 
         @CasePathable enum Delegate {
@@ -61,6 +62,10 @@ struct ScratchFeature: Reducer {
                 state.isScratching = false
                 state.revealedCode = code
                 return .send(.delegate(.cardScratched(code: code)))
+
+            case .cancelScratching:
+                state.isScratching = false
+                return .cancel(id: ScratchCancelID.scratching)
 
             case .delegate:
                 break
