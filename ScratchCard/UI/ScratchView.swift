@@ -84,6 +84,10 @@ struct ScratchView: View {
                     }
                 }
             }
+            .onDisappear {
+                // Cancel scratching operation if user closes screen before completion
+                store.send(.cancelScratching)
+            }
         }
     }
 }

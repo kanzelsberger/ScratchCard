@@ -7,7 +7,33 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  build-and-test:
+  build-and-test-ios:
+    name: Build and Test (iOS)
+    runs-on: macos-15
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Show Xcode version
+      run: xcodebuild -version
+
+    - name: List available simulators
+      run: xcrun simctl list devices available
+
+    - name: Show available schemes
+      run: xcodebuild -list -project ScratchCard.xcodeproj
+
+    - name: Build and Test (iOS Simulator)
+      run: |
+        xcodebuild test \
+          -project ScratchCard.xcodeproj \
+          -scheme ScratchCard \
+          -destination 'platform=iOS Simulator,name=iPhone 16' \
+          CODE_SIGNING_ALLOWED=NO
+
+  build-and-test-macos:
+    name: Build and Test (macOS)
     runs-on: macos-15
 
     steps:
@@ -20,18 +46,10 @@ jobs:
     - name: Show available schemes
       run: xcodebuild -list -project ScratchCard.xcodeproj
 
-    - name: Build
-      run: |
-        xcodebuild build \
-          -project ScratchCard.xcodeproj \
-          -scheme ScratchCard \
-          -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.0' \
-          CODE_SIGNING_ALLOWED=NO
-
-    - name: Run tests
+    - name: Build and Test (macOS)
       run: |
         xcodebuild test \
           -project ScratchCard.xcodeproj \
           -scheme ScratchCard \
-          -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.0' \
+          -destination 'platform=macOS' \
           CODE_SIGNING_ALLOWED=NO

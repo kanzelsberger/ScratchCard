@@ -8,7 +8,8 @@
 import ComposableArchitecture
 import Foundation
 
-struct MainFeature: Reducer {
+@Reducer struct MainFeature {
+
     @ObservableState struct State: Equatable {
         var scratchCardState: ScratchCardState = .unscratched
         @Presents var scratch: ScratchFeature.State?

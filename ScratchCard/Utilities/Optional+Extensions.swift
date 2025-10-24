@@ -11,7 +11,7 @@ extension Optional {
 
     /// Unwraps the optional value or throws an error
     /// Usage: let value = try optional.unwrapped()
-    func unwrapped(or error: @autoclosure () -> Error = UnwrappingError.valueIsNil) throws -> Wrapped {
+    nonisolated func unwrapped(or error: @autoclosure () -> Error = UnwrappingError.valueIsNil) throws -> Wrapped {
         guard let value = self else {
             throw error()
         }
@@ -19,7 +19,7 @@ extension Optional {
     }
 
     /// Unwraps the optional value or throws a custom error with message
-    func unwrapped(or message: @autoclosure () -> String) throws -> Wrapped {
+    nonisolated func unwrapped(or message: @autoclosure () -> String) throws -> Wrapped {
         guard let value = self else {
             throw UnwrappingError.custom(message())
         }
