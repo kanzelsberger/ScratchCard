@@ -11,28 +11,26 @@ protocol APIEndpoint {
     var path: String { get }
     var method: HTTPMethod { get }
     var queryItems: [URLQueryItem]? { get }
-    var baseURL: URL { get throws }
+    var baseURL: URL? { get }
 }
 
-enum HTTPMethod: String {
+enum HTTPMethod: String, Sendable {
     case get = "GET"
     case post = "POST"
     case put = "PUT"
     case delete = "DELETE"
 }
 
-enum APIRoute {
+enum APIRoute: Sendable {
     case version(code: String)
 }
 
 extension APIRoute: APIEndpoint {
-    var baseURL: URL {
-        get throws {
-            var components = URLComponents()
-            components.scheme = "https"
-            components.host = "api.o2.sk"
-            return try components.url.unwrapped(or: "Invalid base URL")
-        }
+    var baseURL: URL? {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.o2.sk"
+        return components.url
     }
 
     var path: String {

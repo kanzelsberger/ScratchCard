@@ -20,8 +20,10 @@ extension APIClient: DependencyKey {
         return APIClient(
             request: { endpoint in
                 do {
+                    let baseURL = try endpoint.baseURL.unwrapped(or: "Invalid base URL")
+
                     guard var components = URLComponents(
-                        url: try endpoint.baseURL.appendingPathComponent(endpoint.path),
+                        url: baseURL.appendingPathComponent(endpoint.path),
                         resolvingAgainstBaseURL: true
                     ) else {
                         throw APIError.invalidURL(message: "Invalid URL components")
